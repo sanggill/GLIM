@@ -440,7 +440,6 @@ void CGLIMYSGDlg::selectCircle(unsigned char* fm)
 	CString strRadius;
 	CString strCenter;
 	CString strSttxy;
-	std::cout << "nWidth:" << nWidth << std::endl;
 	for (int i = 0; i < nHeight; i++)
 	{
 		for (int j = 0; j < nWidth; j++)
@@ -452,17 +451,17 @@ void CGLIMYSGDlg::selectCircle(unsigned char* fm)
 				{
 					nMinsttx = j;
 				}
-				else if (j >= nMaxsttx)
+				else if (j >nMaxsttx)
 				{
 					nMaxsttx = j;
 				}
 	
 
-				else if (i < nMinstty)
+				if (i < nMinstty)
 				{
 					nMinstty = i;
 				}
-				else if (i >= nMaxstty)
+				else if (i > nMaxstty)
 				{
 					nMaxstty = i;
 				}
