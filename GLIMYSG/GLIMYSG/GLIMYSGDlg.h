@@ -23,13 +23,16 @@ private:
 	CImage m_Image;
 	CEdit m_Editloadcenter;
 	CEdit m_Editloadsttxy;
+	CEdit m_startpoint;
+	CEdit m_endpoint;
+	CEdit m_radius;
 	void ImageLaod();
 	void UpdateDisplay();
 	bool isInCircle(int i, int j, int nCenterX, int nCenterY, int nRadius);
 	void CenterMarking(int nRadius, int nCenterX, int nCenterY, int nWidth, int nHeight, int nPitch);
 	void drawImage(int nSttx, int nStty, int nEndx, int nEndy, int nRadius);
-	void moveCircle(int nSttx, int nStty, int nEndx, int nEndy, int nRadius);
-	bool setmoveImage(int nStty, int nSttx, int nCenterY, int nCenterX, int nRadius, unsigned char* fm);
+	void moveImage(int nSttx, int nStty, int nEndx, int nEndy, int nRadius);
+	bool moveCircle(int nStty, int nSttx, int nCenterY, int nCenterX, int nRadius, unsigned char* fm); 
 	int saveImage(int savePoint);
 	void selectCircle();
 	void TexttoInt(CString strBtnname);
@@ -48,4 +51,6 @@ public:
 	afx_msg void OnBnClickedBtnLoad();
 	afx_msg void OnBnClickedBtnReset();
 	afx_msg void OnBnClickedBtnDrawing();
+	
+	
 };

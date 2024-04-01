@@ -62,6 +62,10 @@ void CGLIMYSGDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EID_Center, m_Editloadcenter);
 	DDX_Control(pDX, IDC_EID_STTXY, m_Editloadsttxy);
+
+	DDX_Control(pDX, IDC_EID_Startpoint, m_startpoint);
+	DDX_Control(pDX, IDC_EID_Endpoint, m_endpoint);
+	DDX_Control(pDX, IDC_EID_RADIUS, m_radius);
 }
 
 BEGIN_MESSAGE_MAP(CGLIMYSGDlg, CDialogEx)
@@ -169,7 +173,8 @@ void CGLIMYSGDlg::ImageLaod()
 	m_Image.Create(nWidth, -nHeight, nBpp);
 	if (nBpp == 8) {
 		static RGBQUAD rgb[256];
-		for (int i = 0; i < 256; i++) {
+		for (int i = 0; i < 256; i++)
+		{
 			rgb[i].rgbRed = rgb[i].rgbGreen = rgb[i].rgbBlue = i;
 			m_Image.SetColorTable(0, 256, rgb);
 		}
@@ -227,9 +232,9 @@ void CGLIMYSGDlg::drawImage(int nSttx, int nStty, int nEndx, int nEndy, int nRad
 bool CGLIMYSGDlg::isInCircle(int i, int j, int nCenterX, int nCenterY, int nRadius)
 {
 	bool bRet = false;
-	int dX = i - nCenterX;
-	int dY = j - nCenterY;
-	int dDist = dX * dX + dY * dY;
+	double dX = i - nCenterX;
+	double dY = j - nCenterY;
+	double dDist = dX * dX + dY * dY;
 	if (dDist <= nRadius * nRadius) 
 	{
 		bRet = true;
@@ -268,7 +273,7 @@ void CGLIMYSGDlg::TexttoInt(CString strBtnname)
 	int nEndy = _ttoi(strEndY);
 	if (strBtnname == "Action")
 	{
-		moveCircle(nSttx, nStty, nEndx, nEndy, nRadius);
+		moveImage(nSttx, nStty, nEndx, nEndy, nRadius);
 	}
 	else if (strBtnname == "Drawing") 
 	{
@@ -276,14 +281,14 @@ void CGLIMYSGDlg::TexttoInt(CString strBtnname)
 	}
 }
 
-void CGLIMYSGDlg::moveCircle(int nSttx, int nStty, int nEndx, int nEndy, int nRadius)
+void CGLIMYSGDlg::moveImage(int nSttx, int nStty, int nEndx, int nEndy, int nRadius)
 {	
 	int nWidth = m_Image.GetWidth();
 	int nHeight = m_Image.GetHeight();
 	int nPitch = m_Image.GetPitch();
 	unsigned char* fm = (unsigned char*)m_Image.GetBits();
-	int nCenterX = nSttx + nRadius;
-	int nCenterY = nStty + nRadius;
+	int nSttCenterX = nSttx + nRadius;
+	int nSttCenterY = nStty + nRadius;
 	int nEndCenterX = nEndx + nRadius;
 	int nEndCenterY = nEndy + nRadius;
 	int nSavePoint=0;
@@ -292,51 +297,50 @@ void CGLIMYSGDlg::moveCircle(int nSttx, int nStty, int nEndx, int nEndy, int nRa
 	{
 		memset(fm, 0xff, nWidth* nHeight);
 	
-		if (setmoveImage(nStty, nSttx, nCenterY, nCenterX, nRadius,fm))
+		if (moveCircle(nStty, nSttx, nSttCenterY, nSttCenterX, nRadius,fm))
 		{
 
-			if (nCenterY == nEndCenterY && nCenterX == nEndCenterX)
+			if (nSttCenterY == nEndCenterY && nSttCenterX == nEndCenterX)
 			{
 				break;
 			}
 
-			if (nCenterX < nEndCenterX )
+			if (nSttCenterX < nEndCenterX )
 			{
-				nCenterX += 10;
-				if (nCenterX > nEndCenterX )
+				nSttCenterX += 10;
+				if (nSttCenterX > nEndCenterX )
 				{
-					nCenterX = nEndCenterX;
-					
+					nSttCenterX = nEndCenterX;
 				}
 			}
 
-			else if (nCenterX > nEndCenterX) 
+			else if (nSttCenterX > nEndCenterX)
 			{
-				nCenterX -= 10;
+				nSttCenterX -= 10;
 				nSttx -= 10;
-				if (nCenterX < nEndCenterX)
+				if (nSttCenterX < nEndCenterX)
 				{
-					nCenterX = nEndCenterX;
+					nSttCenterX = nEndCenterX;
 					nStty = nEndCenterX - nRadius;
 				}
 			}
 
-			if (nCenterY< nEndCenterY) 
+			if (nSttCenterY < nEndCenterY)
 			{
-				nCenterY += 10;
-				if (nCenterY > nEndCenterY )
+				nSttCenterY += 10;
+				if (nSttCenterY > nEndCenterY )
 				{
-					nCenterY = nEndCenterY;
+					nSttCenterY = nEndCenterY;
 				}
 			}
 
-			else if (nCenterY > nEndCenterY)
+			else if (nSttCenterY > nEndCenterY)
 			{
-				nCenterY -= 10;
+				nSttCenterY -= 10;
 				nStty -= 10;
-				if (nCenterY < nEndCenterY)
+				if (nSttCenterY < nEndCenterY)
 				{
-					nCenterY = nEndCenterY;
+					nSttCenterY = nEndCenterY;
 					nStty = nEndCenterY - nRadius;
 				}
 			}
@@ -352,7 +356,7 @@ void CGLIMYSGDlg::moveCircle(int nSttx, int nStty, int nEndx, int nEndy, int nRa
 	}	
 }
 
-bool CGLIMYSGDlg::setmoveImage(int nStty, int nSttx, int nCenterY, int nCenterX, int nRadius, unsigned char* fm)
+bool CGLIMYSGDlg::moveCircle(int nStty, int nSttx, int nCenterY, int nCenterX, int nRadius, unsigned char* fm)
 {
 	int nGray = 80;
 	int nWidth = m_Image.GetWidth();
@@ -393,7 +397,10 @@ void CGLIMYSGDlg::OnBnClickedBtnLoad()
 	DWORD dwResult = GetCurrentDirectory(MAX_PATH, strCurrentDir.GetBuffer(MAX_PATH));
 	strCurrentDir.ReleaseBuffer();
 	strCurrentDir += strImagefile;
-
+	m_startpoint.SetWindowText(NULL);
+	m_endpoint.SetWindowText(NULL);
+	m_radius.SetWindowText(NULL);
+	
 	CFileDialog dlg(TRUE, _T("*.bmp"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Bitmap Files (*.bmp)|*.bmp||"), this);
 	dlg.m_ofn.lpstrInitialDir = strCurrentDir; 
 
@@ -458,9 +465,10 @@ void CGLIMYSGDlg::selectCircle()
 	m_Editloadcenter.SetWindowText(strCenter);
 	m_Editloadsttxy.SetWindowText(strSttxy);
 	CenterMarking(nRadius, nCenterX, nCenterY, nWidth, nHeight, nPitch);
-	std::cout << "원중앙좌표X:" << nCenterX << std::endl;
-	std::cout << "원중앙좌표Y:" << nCenterY << std::endl;
+	std::cout << "좌표X:" << nCenterX << std::endl;
+	std::cout << "좌표Y:" << nCenterY << std::endl;
 	std::cout << "반지름:" << nRadius << std::endl;
+	std::cout << std::endl;
 }
 
 void CGLIMYSGDlg::CenterMarking(int nRadius, int nCenterX, int nCenterY, int nWidth, int nHeight, int nPitch)
