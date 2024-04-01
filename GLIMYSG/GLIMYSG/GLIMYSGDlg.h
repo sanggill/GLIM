@@ -27,11 +27,11 @@ private:
 	void UpdateDisplay();
 	bool isInCircle(int i, int j, int nCenterX, int nCenterY, int nRadius);
 	void CenterMarking(int nRadius, int nCenterX, int nCenterY, int nWidth, int nHeight, int nPitch);
-	void drawImage(int nSttx, int nStty, int nEndx, int nEndy,int nRadius);
+	void drawImage(int nSttx, int nStty, int nEndx, int nEndy, int nRadius);
 	void moveCircle(int nSttx, int nStty, int nEndx, int nEndy, int nRadius);
 	bool setmoveImage(int nStty, int nSttx, int nCenterY, int nCenterX, int nRadius, unsigned char* fm);
 	int saveImage(int savePoint);
-	void selectCircle(unsigned char* fm);
+	void selectCircle();
 	void TexttoInt(CString strBtnname);
 protected:
 	HICON m_hIcon;
